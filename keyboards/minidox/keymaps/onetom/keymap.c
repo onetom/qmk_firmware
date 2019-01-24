@@ -28,8 +28,41 @@ enum custom_keycodes {
 #define DSK_LFT LGUI(LCTL(KC_LEFT))
 #define DSK_RT  LGUI(LCTL(KC_RIGHT))
 
-const uint16_t PROGMEM test_combo[] = {KC_Q, KC_W, COMBO_END};
-combo_t key_combos[COMBO_COUNT] = {COMBO(test_combo, KC_ESC)};
+enum combos {
+  QW_ESC,
+  FG_TAB,
+  RT_BACKTICK,
+  ZC_COPY,
+  XV_PASTE,
+
+  HJ_LEFT,
+  UI_UP,
+  KL_RIGHT,
+  MCOMMA_DN
+};
+
+const uint16_t PROGMEM esc_combo[] = {KC_Q, KC_W, COMBO_END};
+const uint16_t PROGMEM tab_combo[] = {KC_F, KC_G, COMBO_END};
+const uint16_t PROGMEM backtick_combo[] = {KC_R, KC_T, COMBO_END};
+const uint16_t PROGMEM copy_combo[] = {KC_Z, KC_C, COMBO_END};
+const uint16_t PROGMEM paste_combo[] = {KC_X, KC_V, COMBO_END};
+const uint16_t PROGMEM left_combo[] = {KC_H, KC_J, COMBO_END};
+const uint16_t PROGMEM up_combo[] = {KC_U, KC_I, COMBO_END};
+const uint16_t PROGMEM right_combo[] = {KC_K, KC_L, COMBO_END};
+const uint16_t PROGMEM down_combo[] = {KC_M, KC_COMM, COMBO_END};
+
+combo_t key_combos[COMBO_COUNT] = {
+  [QW_ESC] = COMBO(esc_combo, KC_ESC),
+  [FG_TAB] = COMBO(tab_combo, KC_TAB),
+  [RT_BACKTICK] = COMBO(backtick_combo, KC_GRV),
+  [ZC_COPY] = COMBO_ACTION(copy_combo),
+  [XV_PASTE] = COMBO_ACTION(paste_combo),
+
+  [HJ_LEFT] = COMBO(left_combo, KC_LEFT),
+  [UI_UP] = COMBO(up_combo, KC_UP),
+  [KL_RIGHT] = COMBO(right_combo, KC_RIGHT),
+  [MCOMMA_DN] = COMBO(down_combo, KC_DOWN)
+};
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -37,7 +70,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                       KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    \
   KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                       KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, \
   KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                       KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, \
-          ALT_T(KC_ENT), LT(_LOWER, KC_TAB), GUI_T(KC_SPC),       SFT_T(KC_BSPC), LT(_RAISE, KC_DEL), KC_LCTL  \
+          ALT_T(KC_TAB), LT(_LOWER, KC_BSPC), GUI_T(KC_SPC),       SFT_T(KC_ENT), LT(_RAISE, KC_DEL), KC_LCTL  \
 ),
 
 [_RAISE] = LAYOUT( \
@@ -64,7 +97,29 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 )
 };
 
-void persistant_default_layer_set(uint16_t default_layer) {
+void persistant_deifault_layer_set(uint16_t default_layer) {
   eeconfig_update_default_layer(default_layer);
-  default_layer_set(default_layer);
+  default_layer_set(default_layer);;
+}
+
+void process_combo_event(uint8_t combo_index, bool pressed) {
+  switch(combo_index) {
+    case ZC_COPY:
+      if (pressed) {
+        register_code(KC_LGUI);
+        register_code(KC_C);
+        unregister_code(KC_C);
+        unregister_code(KC_LGUI);
+      }
+      break;
+
+    case XV_PASTE:
+      if (pressed) {
+        register_code(KC_LGUI);
+        register_code(KC_V);
+        unregister_code(KC_V);
+        unregister_code(KC_LGUI);
+      }
+      break;
+  }
 }

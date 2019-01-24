@@ -3,7 +3,7 @@
 
 #define PERMISSIVE_HOLD
 #define IGNORE_MOD_TAP_INTERRUPT
-#define COMBO_COUNT 1
+#define COMBO_COUNT 9
 //#define TAPPING_TERM 200
 #define COMBO_TERM 100
 
